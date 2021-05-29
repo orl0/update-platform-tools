@@ -185,14 +185,17 @@ function main() {
 #  - source this file and use it as a function in your script
 # Idea was taken from http://bash3boilerplate.sh/
 if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
-  # Rename 'main' function...
-  readonly f=$(declare -f "${__base}")
-  eval "function ${__base} ${f#*"()"}"
-  unset f; unset -f "main"
-  # ...and export it with the same name as script have
-  export -f "${__base?}"
+  _pack_main() {
+    local -r b="$(basename "${BASH_SOURCE[0]}")"
+    # Rename 'main' function...
+    local -r f=$(declare -f main)
+    eval "${b} () ${f#*\(\)}"
+    unset -f main
+    # ...and export it with the same name as script have
+    export -f "${b?}"
+  }
+  _pack_main && unset -f _pack_main
 else
   main
   exit $?
 fi
-
