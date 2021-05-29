@@ -54,9 +54,9 @@ readonly SDK_PT_LATEST_DL_LINK=${SDK_PT_LATEST_DL_LINK:-'https://dl.google.com/a
 # Some usefull variables
 readonly __base="$(basename "${BASH_SOURCE[0]}")"
 # And functions
-function installed() { [[ $(type -p "${1?}") ]]; }
-function err() { echo "${__base}: $*" >&2; }
-function normalize_version() {
+installed() { [[ $(type -p "${1?}") ]]; }
+err() { echo "${__base}: $*" >&2; }
+normalize_version() {
   command awk 'BEGIN {
     split(ARGV[1], x, /\-/);
     split(x[1], a, /\./);
@@ -69,7 +69,7 @@ function normalize_version() {
 readonly pre="=> "
 
 # Main loop
-function main() {
+main() {
   if ! installed "curl"; then
     err "'curl' is required for this script to work"
     err "please install it with your package manager and try again"
