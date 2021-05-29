@@ -47,29 +47,26 @@
 # - Set the exit code of a pipeline to zero or to the rightmost exit code
 set -euo pipefail
 
-# URL to latest platform tools.
-# Could be overriden or uses default value.
-readonly SDK_PT_LATEST_DL_LINK=${SDK_PT_LATEST_DL_LINK:-'https://dl.google.com/android/repository/platform-tools-latest-linux.zip'}
-
-# Some usefull variables
-readonly __base="$(basename "${BASH_SOURCE[0]}")"
-# And functions
-installed() { [[ $(type -p "${1?}") ]]; }
-err() { echo "${__base}: $*" >&2; }
-normalize_version() {
-  command awk 'BEGIN {
-    split(ARGV[1], x, /\-/);
-    split(x[1], a, /\./);
-    printf "%d%06d%06d\n", a[1], a[2], a[3];
-    exit;
-  }' "${1#r}"
-}
-
-# Mark for commands in console log
-readonly pre="=> "
-
 # Main loop
 main() {
+
+  local -r __base="$(basename "${BASH_SOURCE[0]}")"
+  local -r dl_link=${SDK_PT_LATEST_DL_LINK:-"https://dl.google.com/android/repository/platform-tools-latest-linux.zip"}
+
+  # Mark for commands in console log
+  local -r pre="=> "
+
+  installed() { [[ $(type -p "${1?}") ]]; }
+  err() { echo "${__base}: $*" >&2; }
+  normalize_version() {
+    command awk 'BEGIN {
+      split(ARGV[1], x, /\-/);
+      split(x[1], a, /\./);
+      printf "%d%06d%06d\n", a[1], a[2], a[3];
+      exit;
+    }' "${1#r}"
+  }
+
   if ! installed "curl"; then
     err "'curl' is required for this script to work"
     err "please install it with your package manager and try again"
@@ -85,7 +82,7 @@ main() {
   local_version=$(./fastboot --version | head -1 | rev | cut -d' ' -f1 | rev)
 
   local -r remote_latest_file=$(
-                          curl -qsSI "${SDK_PT_LATEST_DL_LINK}" \
+                          curl -qsSI "${dl_link}" \
                           | grep -iE "location\: " | rev | cut -d/ -f1 | rev)
   remote_version=$(echo "$remote_latest_file" | cut -d'_' -f2 | cut -d'-' -f1)
 
@@ -129,11 +126,11 @@ main() {
 
       local tmp_dir tmp_fn
       tmp_dir=$(mktemp -d -t update_pt.XXXXXXXXXX)
-      tmp_fn=$(echo "${SDK_PT_LATEST_DL_LINK}" | rev | cut -d/ -f1 | rev)
+      tmp_fn=$(echo "${dl_link}" | rev | cut -d/ -f1 | rev)
 
       echo "${pre}Dowloading '${tmp_fn}'..."
       echo ""
-      curl -q -L -o "${tmp_dir}/${tmp_fn}" "${SDK_PT_LATEST_DL_LINK}"
+      curl -q -L -o "${tmp_dir}/${tmp_fn}" "${dl_link}"
 
       local -r curl_return_code=$?
       if [[ $curl_return_code = 0 ]]; then
