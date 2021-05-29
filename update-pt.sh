@@ -166,6 +166,10 @@ main() {(
     else
       echo "Aborted."
     fi
+  else
+    echo "Your Platform Tools version looks recent enough."
+    echo "Local version:   ${local_version}"
+    echo "Remote version:  ${remote_version}"
   fi
 
   local -r return_code=$?
