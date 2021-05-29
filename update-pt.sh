@@ -106,8 +106,14 @@ main() {
     echo "Remote version:  ${remote_version}"
     echo ""
     printf "Do you want to perform upgrade? [Y/n] "
-    read -r Y_OR_N REST && Y_OR_N=${Y_OR_N:-y}
-    if [[ ${Y_OR_N,,} == 'y' ]]; then
+    read -N1 -r Y_OR_N REST
+    if [[ "${Y_OR_N}" == $'\n' ]]; then
+      Y_OR_N="y"
+    else
+      echo ""
+    fi
+
+    if [[ "${Y_OR_N,,}" == "y" ]]; then
       echo
 
       if ! installed "unzip"; then
