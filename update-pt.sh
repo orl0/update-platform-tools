@@ -73,12 +73,12 @@ function main() {
   if ! installed "curl"; then
     err "'curl' is required for this script to work"
     err "please install it with your package manager and try again"
-    exit 1
+    return 127
   fi
 
   if ! [[ -x ./fastboot ]]; then
     err "can't find or execute 'fastboot' in current directory"
-    exit 1
+    return 1
   fi
 
   local local_version local_norm_ver remote_version remote_norm_ver
@@ -113,12 +113,12 @@ function main() {
       if ! installed "unzip"; then
         err "you need 'unzip' utility to perform upgrade"
         err "please install it with your package manager and try again"
-        exit 1
+        return 127
       fi
       if ! [[ -w "$PWD" ]]; then
         err "you don't have permission to write into this directory"
         err "no actions have been performed"
-        exit 1
+        return 1
       fi
 
       local tmp_dir tmp_fn
