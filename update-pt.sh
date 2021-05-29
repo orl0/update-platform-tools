@@ -129,24 +129,37 @@ main() {(
 
       echo "${pre}Dowloading '${tmp_fn}'..."
       echo ""
-      curl -q -L -o "${tmp_dir}/${tmp_fn}" "${dl_link}"
 
-      local -r curl_return_code=$?
-      if [[ $curl_return_code = 0 ]]; then
+      local curl_return_code
+      curl_return_code=0
+
+      curl -q -L -o "${tmp_dir}/${tmp_fn}" "${dl_link}" ||
+        curl_return_code=$?
+
+      if [[ $curl_return_code == 0 ]]; then
         echo ""
         echo "${pre}Using unzip to extract '${tmp_fn}':"
         echo ""
-        unzip -qo "${tmp_dir}/${tmp_fn}" "platform-tools/*" -d "${tmp_dir}"
 
-        local -r unzip_return_code=$?
+        local unzip_return_code
+        unzip_return_code=0
+
+        unzip -qo "${tmp_dir}/${tmp_fn}" "platform-tools/*" -d "${tmp_dir}" ||
+          unzip_return_code=$?
+
         if [[ $unzip_return_code = 0 ]]; then
           echo "."
           echo "✓ Done!"
           echo ""
           echo "${pre}Coping extracted files to '${PWD}'..."
           echo ""
-          cp -rfu -t "${PWD}" "${tmp_dir}/platform-tools/"*
-          local -r cp_return_code=$?
+
+          local cp_return_code
+          cp_return_code=0
+
+          cp -rfu -t "${PWD}" "${tmp_dir}/platform-tools/"* ||
+            cp_return_code=$?
+
           if [[ $cp_return_code = 0 ]]; then
             echo "."
             echo "✓ Successful!"
