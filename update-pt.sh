@@ -85,6 +85,11 @@ main() {(
                           | grep -iE "location\: " | rev | cut -d/ -f1 | rev)
   remote_version=$(echo "$remote_latest_file" | cut -d'_' -f2 | cut -d'-' -f1)
 
+  if [[ -z "$remote_version" ]]; then
+    err "failed to fetch version info from '${dl_link}'"
+    return 1
+  fi
+
   local_norm_ver=$(normalize_version "${local_version}")
   remote_norm_ver=$(normalize_version "${remote_version}")
 
