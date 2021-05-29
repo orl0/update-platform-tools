@@ -75,11 +75,6 @@ function main() {
     err "please install it with your package manager and try again"
     exit 1
   fi
-  if ! installed "unzip"; then
-    err "'unzip' is required for this script to work"
-    err "please install it with your package manager and try again"
-    exit 1
-  fi
 
   if ! [[ -x ./fastboot ]]; then
     err "can't find or execute 'fastboot' in current directory"
