@@ -43,14 +43,9 @@
 
 # Setting some options:
 # - Exit on error
-# - Do not allow use of undefined vars (on version 4.4+).
+# - Do not allow use of undefined vars (works fine on bash 4.4+).
 # - Set the exit code of a pipeline to zero or to the rightmost exit code
-if test "$BASH" = "" || "$BASH" -uc "a=();true \"\${a[@]}\"" 2>/dev/null; then
-    set -euo pipefail
-else
-    # Bash 4.3 and older chokes on empty arrays with set -u.
-    set -eo pipefail
-fi
+set -euo pipefail
 
 # URL to latest platform tools.
 # Could be overriden or uses default value.
