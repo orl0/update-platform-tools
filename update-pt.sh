@@ -38,17 +38,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-# Main loop (running inside subshell to keep shell options local)
-main() {(
-  # Debug mode:
-  # set -o xtrace
-
-  # Setting some options:
-  # - Exit on error
-  # - Do not allow use of undefined vars (works fine on bash 4.4+).
-  # - Set the exit code of a pipeline to zero or to the rightmost exit code
-  set -euo pipefail
-
+# Main loop
+main() {
   local -r __base="$(basename "${BASH_SOURCE[0]}")"
   local -r dl_link=${SDK_PT_LATEST_DL_LINK:-"https://dl.google.com/android/repository/platform-tools-latest-linux.zip"}
 
@@ -192,8 +183,7 @@ main() {(
 
   local -r return_code=$?
   return ${return_code}
-)}
-
+}
 
 # Function packaging!
 #  - source this file and use it as a function in your script
@@ -210,6 +200,18 @@ if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
   }
   _pack_main && unset -f _pack_main
 else
-  main
+  # running inside subshell to keep shell options local
+  (
+    # Debug mode:
+    # set -o xtrace
+
+    # Setting some options:
+    # - Exit on error
+    # - Do not allow use of undefined vars (works fine on bash 4.4+).
+    # - Set the exit code of a pipeline to zero or to the rightmost exit code
+    set -euo pipefail
+
+    main
+  )
   exit $?
 fi
